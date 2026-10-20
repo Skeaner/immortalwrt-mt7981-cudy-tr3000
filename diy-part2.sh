@@ -158,6 +158,9 @@ git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/
 rm -rf feeds/luci/applications/luci-app-passwall
 git clone https://github.com/Openwrt-Passwall/openwrt-passwall package/passwall-luci
 
+# 关键修复：删除导致 Rust 编译失败的 geoview 源码
+rm -rf package/passwall-packages/geoview
+
 # 创建存储二进制文件的目录
 BIN_DIR="$GITHUB_WORKSPACE/openwrt/files/usr/bin"
 mkdir -p "$BIN_DIR"
