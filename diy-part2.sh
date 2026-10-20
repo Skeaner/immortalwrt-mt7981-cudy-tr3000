@@ -11,7 +11,7 @@
 #
 
 # Modify default IP
-#sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.69.2/g' package/base-files/files/bin/config_generate
 
 # Modify default theme
 #sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
@@ -142,3 +142,34 @@ EOF_512_DEV
   fi
 fi
 
+
+# ==========================================
+# 自定义部分
+# ==========================================
+
+# 1. 编译 PassWall 及其常用核心（Sing-Box / Xray）
+echo "CONFIG_PACKAGE_luci-app-passwall=y" >> .config
+echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=y" >> .config
+echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y" >> .config
+echo "CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y" >> .config
+
+# 2. 手机 USB 共享网络驱动
+# 安卓 USB 共享支持 (RNDIS)
+echo "CONFIG_PACKAGE_kmod-usb-net-rndis=y" >> .config
+
+# 苹果 iOS USB 共享支持 (Ipheth + Usbmuxd)
+echo "CONFIG_PACKAGE_kmod-usb-net-ipheth=y" >> .config
+echo "CONFIG_PACKAGE_usbmuxd=y" >> .config
+
+# 基础 USB 网卡驱动及查看工具 (防止识别不到网卡)
+echo "CONFIG_PACKAGE_kmod-usb-net=y" >> .config
+echo "CONFIG_PACKAGE_kmod-usb-net-cdc-ether=y" >> .config
+echo "CONFIG_PACKAGE_usbutils=y" >> .config
+
+# 解锁 MTD 分区写保护内核模块 (MTD-RW)
+echo "CONFIG_PACKAGE_kmod-mtd-rw=y" >> .config
+
+# FTP 服务器 (vsftpd 核心 + LuCI Web 界面 + 中文语言包)
+echo "CONFIG_PACKAGE_vsftpd-alt=y" >> .config
+echo "CONFIG_PACKAGE_luci-app-vsftpd=y" >> .config
+echo "CONFIG_PACKAGE_luci-i18n-vsftpd-zh-cn=y" >> .config
