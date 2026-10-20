@@ -147,6 +147,9 @@ fi
 # 自定义部分
 # ==========================================
 
+# 删除 MTK 源码自带的易报错 5G 驱动（由 QModem 接管）
+rm -rf package/mtk/applications/5g-modem
+
 # 移除 openwrt feeds 自带的核心库
 rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,v2ray-plugin,xray-plugin,geoview,shadow-tls}
 git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages
