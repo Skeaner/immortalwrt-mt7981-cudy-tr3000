@@ -147,10 +147,40 @@ fi
 # 自定义部分
 # ==========================================
 
-# 1. 编译 PassWall 及其常用核心（Sing-Box / Xray）
+# 移除 openwrt feeds 自带的核心库
+rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,v2ray-plugin,xray-plugin,geoview,shadow-tls}
+git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages
+
+# 移除 openwrt feeds 过时的luci版本
+rm -rf feeds/luci/applications/luci-app-passwall
+git clone https://github.com/Openwrt-Passwall/openwrt-passwall package/passwall-luci
+
+# 创建存储二进制文件的目录
+BIN_DIR="$GITHUB_WORKSPACE/openwrt/files/usr/bin"
+mkdir -p "$BIN_DIR"
+
+# -------- 下载并解压 xray-core ARM64 -------
+echo "Downloading xray-core..."
+XRAY_TAG=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep 'tag_name' | cut -d\" -f4)
+curl -L -o xray.zip "https://github.com/XTLS/Xray-core/releases/download/${XRAY_TAG}/Xray-linux-arm64-v8a.zip"
+unzip -o xray.zip -d "$BIN_DIR"
+chmod +x "$BIN_DIR/xray"
+rm xray.zip
+
+# -------- 下载并解压 sing-box ARM64 -------
+echo "Downloading sing-box..."
+SING_BOX_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep 'tag_name' | cut -d\" -f4)
+SING_BOX_VER=${SING_BOX_TAG#v}
+curl -L -o sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_TAG}/sing-box-${SING_BOX_VER}-linux-arm64.tar.gz"
+TMP_DIR=$(mktemp -d)
+tar -xzf sing-box.tar.gz -C "$TMP_DIR"
+mv "$TMP_DIR"/sing-box-${SING_BOX_VER}-linux-arm64/sing-box "$BIN_DIR"/sing-box
+chmod +x "$BIN_DIR/sing-box"
+rm -rf "$TMP_DIR"
+rm sing-box.tar.gz
+
+# PassWall 控制面板
 echo "CONFIG_PACKAGE_luci-app-passwall=y" >> .config
-echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=y" >> .config
-echo "CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Xray=y" >> .config
 echo "CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y" >> .config
 
 # 2. 手机 USB 共享网络驱动
@@ -173,3 +203,7 @@ echo "CONFIG_PACKAGE_kmod-mtd-rw=y" >> .config
 echo "CONFIG_PACKAGE_vsftpd-alt=y" >> .config
 echo "CONFIG_PACKAGE_luci-app-vsftpd=y" >> .config
 echo "CONFIG_PACKAGE_luci-i18n-vsftpd-zh-cn=y" >> .config
+
+# qmodem
+echo "CONFIG_PACKAGE_qmodem=y" >> .config
+echo "CONFIG_PACKAGE_luci-app-qmodem-next=y" >> .config

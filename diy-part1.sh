@@ -31,5 +31,8 @@ git clone https://github.com/timsaya/luci-app-bandix package/luci-app-bandix
 git clone https://github.com/timsaya/openwrt-bandix package/openwrt-bandix
 
 # ====== 新增：添加 PassWall 软件源和依赖源 ======
-echo 'src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' >> feeds.conf.default
-echo 'src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' >> feeds.conf.default
+# echo 'src-git passwall_packages https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' >> feeds.conf.default
+# echo 'src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' >> feeds.conf.default
+
+# qmodem
+echo "src-git qmodem https://github.com/FUjr/QModem.git;main" >> feeds.conf.default
