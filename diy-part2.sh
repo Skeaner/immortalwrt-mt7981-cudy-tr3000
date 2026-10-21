@@ -165,6 +165,9 @@ git clone --depth 1 \
   https://github.com/Openwrt-Passwall/openwrt-passwall \
   package/passwall-luci
 
+# 关键修复：删除导致 Rust 编译失败的 geoview 源码
+rm -rf package/passwall-packages/geoview
+
 # qmodem
 # echo "CONFIG_PACKAGE_qmodem=y" >> .config
 # echo "CONFIG_PACKAGE_luci-app-qmodem-next=y" >> .config
