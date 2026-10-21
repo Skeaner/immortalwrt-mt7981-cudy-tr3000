@@ -185,6 +185,10 @@ chmod +x "$BIN_DIR/sing-box"
 rm -rf "$TMP_DIR"
 rm sing-box.tar.gz
 
+# 告诉 OpenWrt 在打包 rootfs 发生文件冲突时强制覆盖（Force Overwrite），避免 opkg 闪退报错 255
+mkdir -p package/base-files/files/etc
+echo "option force_overwrite 1" >> package/base-files/files/etc/opkg.conf 2>/dev/null || true
+
 # PassWall 控制面板
 echo "CONFIG_PACKAGE_luci-app-passwall=y" >> .config
 echo "CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y" >> .config
