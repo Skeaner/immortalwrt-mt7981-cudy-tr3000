@@ -11,7 +11,7 @@
 #
 
 # Modify default IP
-sed -i 's/192.168.1.1/192.168.69.2/g' package/base-files/files/bin/config_generate
+# sed -i 's/192.168.1.1/192.168.69.2/g' package/base-files/files/bin/config_generate
 
 # Modify default theme
 #sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
@@ -151,43 +151,39 @@ fi
 rm -rf package/mtk/applications/5g-modem
 
 # 移除 openwrt feeds 自带的核心库
-rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages
+# rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,v2ray-plugin,xray-plugin,geoview,shadow-tls}
+# git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/passwall-packages
 
 # 移除 openwrt feeds 过时的luci版本
-rm -rf feeds/luci/applications/luci-app-passwall
-git clone https://github.com/Openwrt-Passwall/openwrt-passwall package/passwall-luci
+# rm -rf feeds/luci/applications/luci-app-passwall
+# git clone https://github.com/Openwrt-Passwall/openwrt-passwall package/passwall-luci
 
 # 关键修复：删除导致 Rust 编译失败的 geoview 源码
-rm -rf package/passwall-packages/geoview
+# rm -rf package/passwall-packages/geoview
 
 # 创建存储二进制文件的目录
-BIN_DIR="$GITHUB_WORKSPACE/openwrt/files/usr/bin"
-mkdir -p "$BIN_DIR"
+#BIN_DIR="$GITHUB_WORKSPACE/openwrt/files/usr/bin"
+#mkdir -p "$BIN_DIR"
 
 # -------- 下载并解压 xray-core ARM64 -------
-echo "Downloading xray-core..."
-XRAY_TAG=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep 'tag_name' | cut -d\" -f4)
-curl -L -o xray.zip "https://github.com/XTLS/Xray-core/releases/download/${XRAY_TAG}/Xray-linux-arm64-v8a.zip"
-unzip -o xray.zip -d "$BIN_DIR"
-chmod +x "$BIN_DIR/xray"
-rm xray.zip
+#echo "Downloading xray-core..."
+#XRAY_TAG=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep 'tag_name' | cut -d\" -f4)
+#curl -L -o xray.zip "https://github.com/XTLS/Xray-core/releases/download/${XRAY_TAG}/Xray-linux-arm64-v8a.zip"
+#unzip -o xray.zip -d "$BIN_DIR"
+#chmod +x "$BIN_DIR/xray"
+#rm xray.zip
 
 # -------- 下载并解压 sing-box ARM64 -------
-echo "Downloading sing-box..."
-SING_BOX_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep 'tag_name' | cut -d\" -f4)
-SING_BOX_VER=${SING_BOX_TAG#v}
-curl -L -o sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_TAG}/sing-box-${SING_BOX_VER}-linux-arm64.tar.gz"
-TMP_DIR=$(mktemp -d)
-tar -xzf sing-box.tar.gz -C "$TMP_DIR"
-mv "$TMP_DIR"/sing-box-${SING_BOX_VER}-linux-arm64/sing-box "$BIN_DIR"/sing-box
-chmod +x "$BIN_DIR/sing-box"
-rm -rf "$TMP_DIR"
-rm sing-box.tar.gz
-
-# 告诉 OpenWrt 在打包 rootfs 发生文件冲突时强制覆盖（Force Overwrite），避免 opkg 闪退报错 255
-mkdir -p package/base-files/files/etc
-echo "option force_overwrite 1" >> package/base-files/files/etc/opkg.conf 2>/dev/null || true
+#echo "Downloading sing-box..."
+#SING_BOX_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep 'tag_name' | cut -d\" -f4)
+#SING_BOX_VER=${SING_BOX_TAG#v}
+#curl -L -o sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_TAG}/sing-box-${SING_BOX_VER}-linux-arm64.tar.gz"
+#TMP_DIR=$(mktemp -d)
+#tar -xzf sing-box.tar.gz -C "$TMP_DIR"
+#mv "$TMP_DIR"/sing-box-${SING_BOX_VER}-linux-arm64/sing-box "$BIN_DIR"/sing-box
+#chmod +x "$BIN_DIR/sing-box"
+#rm -rf "$TMP_DIR"
+#rm sing-box.tar.gz
 
 # PassWall 控制面板
 echo "CONFIG_PACKAGE_luci-app-passwall=y" >> .config
