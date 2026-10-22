@@ -147,6 +147,13 @@ fi
 # 自定义部分
 # ==========================================
 
+# 2. 更新 Go 语言包到 1.27.x
+rm -rf feeds/packages/lang/golang
+
+git clone --depth 1 --branch 27.x \
+  https://github.com/sbwml/packages_lang_golang \
+  feeds/packages/lang/golang
+
 # 删除 MTK 源码自带的易报错 5G 驱动（由 QModem 接管）
 # rm -rf package/mtk/applications/5g-modem
 
@@ -166,8 +173,8 @@ git clone --depth 1 \
   package/passwall-luci
 
 # 关键修复：删除导致 Rust 编译失败的 geoview 源码
-rm -rf package/passwall-packages/geoview
-rm -rf package/passwall-packages/sing-box
+# rm -rf package/passwall-packages/geoview
+# rm -rf package/passwall-packages/sing-box
 # qmodem
 # echo "CONFIG_PACKAGE_qmodem=y" >> .config
 # echo "CONFIG_PACKAGE_luci-app-qmodem-next=y" >> .config
