@@ -35,4 +35,4 @@ git clone https://github.com/timsaya/openwrt-bandix package/openwrt-bandix
 # echo 'src-git passwall https://github.com/Openwrt-Passwall/openwrt-passwall.git;main' >> feeds.conf.default
 
 # qmodem
- echo "src-git qmodem https://github.com/FUjr/QModem.git;main" >> feeds.conf.default
+# echo "src-git qmodem https://github.com/FUjr/QModem.git;main" >> feeds.conf.default

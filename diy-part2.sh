@@ -19,60 +19,6 @@ sed -i 's/192\.168\.6\.1/192.168.69.2/g' package/base-files/files/bin/config_gen
 # Modify hostname
 #sed -i 's/OpenWrt/P3TERX-Router/g' package/base-files/files/bin/config_generate
 
-# 修复QMODEM问题
-set -euo pipefail
-
-cd "$GITHUB_WORKSPACE/openwrt"
-
-# 1) 自动定位 MTK 自带的 Fibocom QMI 驱动目录
-PKG_DIR=""
-for d in \
-  "$PWD/package/mtk/applications/5g-modem/fibocom_QMI_WWAN" \
-  "$PWD/feeds/mtk/applications/5g-modem/fibocom_QMI_WWAN" \
-  "$PWD/package/mtk/5g-modem/fibocom_QMI_WWAN" \
-  "$PWD/feeds/mtk/5g-modem/fibocom_QMI_WWAN"
-do
-  if [ -f "$d/qmi_wwan_f.c" ]; then
-    PKG_DIR="$d"
-    break
-  fi
-done
-
-if [ -n "$PKG_DIR" ]; then
-  echo "Patching $PKG_DIR for Linux 6.6 compatibility..."
-
-  mkdir -p "$PKG_DIR/patches"
-
-  cat > "$PKG_DIR/patches/0001-linux-6.6-u64-stats-compat.patch" <<'PATCH'
---- a/qmi_wwan_f.c
-+++ b/qmi_wwan_f.c
-@@
- #include <linux/if_arp.h>
- #include <linux/if_ether.h>
-+#include <linux/u64_stats_sync.h>
- #include <linux/ip.h>
-@@
--            start = u64_stats_fetch_begin_irq(&stats64->syncp);
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
-+            start = u64_stats_fetch_begin(&stats64->syncp);
-+#else
-+            start = u64_stats_fetch_begin_irq(&stats64->syncp);
-+#endif
-@@
--        } while (u64_stats_fetch_retry_irq(&stats64->syncp, start));
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
-+        } while (u64_stats_fetch_retry(&stats64->syncp, start));
-+#else
-+        } while (u64_stats_fetch_retry_irq(&stats64->syncp, start));
-+#endif
-PATCH
-
-  patch -p1 -d "$PKG_DIR" < "$PKG_DIR/patches/0001-linux-6.6-u64-stats-compat.patch"
-  echo "Patch applied successfully"
-else
-  echo "fibocom_QMI_WWAN not found, skip patch"
-fi
-
 # 确保编译时使用包含 2026-07-08 MTK 扫描修复的源码。
 # 修复包括 PartialScan 状态竞态、后台扫描丢包和 5 秒固定等待缩短为 3 秒。
 REQUIRED_WIFI_SCAN_FIX="6de7ebc60200ddc1ba50596a50f9f4d0cac06ef9"
