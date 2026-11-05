@@ -1,0 +1,4 @@
+device=512M
+prerelease=false
+release=true
+repo=https://github.com/padavanonly/immortalwrt-mt798x-6.6
