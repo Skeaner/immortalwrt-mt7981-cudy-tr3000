@@ -167,8 +167,13 @@ git clone --depth 1 \
 
 rm -rf feeds/luci/applications/luci-app-passwall
 rm -rf package/passwall-luci
-
 git clone --depth 1 \
   https://github.com/Openwrt-Passwall/openwrt-passwall \
   package/passwall-luci
+
+# 4. Clone Lucky package
+rm -rf package/lucky
+git clone --depth 1 \
+  https://github.com/gdy666/luci-app-lucky \
+  package/lucky
 

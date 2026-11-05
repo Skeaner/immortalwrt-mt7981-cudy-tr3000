@@ -53,7 +53,7 @@ env:
   REPO_URL: ${{ github.event.inputs.repo || github.event.client_payload.repo || 'https://github.com/padavanonly/immortalwrt-mt798x-6.6' }}
   REPO_BRANCH: openwrt-24.10-6.6
   REPO_COMMIT: ${{ github.event.inputs.commit || github.event.client_payload.commit || '' }}
-  UPLOAD_RELEASE: ${{ github.event.inputs.release || github.event.client_payload.release || 'false' }}
+  UPLOAD_RELEASE: ${{ inputs.release != '' && inputs.release || github.event.inputs.release || github.event.client_payload.release || 'true' }}
   PRERELEASE: ${{ github.event.inputs.prerelease || github.event.client_payload.prerelease || 'false' }}
   CCACHE_DIR: /workdir/.ccache
   CCACHE_MAXSIZE: 2G
@@ -327,7 +327,7 @@ jobs:
   release:
     name: 📤 Publish Release
     needs: [prepare, build]
-    if: ${{ needs.build.result == 'success' && needs.prepare.outputs.release == 'true' }}
+    if: ${{ needs.prepare.outputs.release == 'true' || needs.prepare.outputs.release == true }}
     runs-on: ubuntu-22.04
     env:
       BUILD_SELECTION: ${{ needs.prepare.outputs.device }}
@@ -372,7 +372,6 @@ jobs:
 
           Built with GitHub Actions
           EOF_RELEASE
-
       - name: 🚀 Upload to Release
         uses: softprops/action-gh-release@v2
         with:
